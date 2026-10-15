@@ -53,11 +53,11 @@ enum ForecastMapper {
         hourly.time.indices.compactMap { index in
             guard
                 let time = hourly.time[index].date(utcOffset: utcOffset),
-                let temperature = hourly.temperature2m[safe: index] ?? nil
+                let temperature = hourly.temperature2m.value(at: index)
             else { return nil }
-            let chance = hourly.precipitationProbability?[safe: index] ?? nil
-            let code = hourly.weatherCode[safe: index] ?? nil
-            let isDay = hourly.isDay?[safe: index] ?? nil
+            let chance = hourly.precipitationProbability?.value(at: index)
+            let code = hourly.weatherCode.value(at: index)
+            let isDay = hourly.isDay?.value(at: index)
             return HourlyForecast(
                 time: time,
                 temperature: temperature,
@@ -72,13 +72,13 @@ enum ForecastMapper {
         daily.time.indices.compactMap { index in
             guard
                 let date = daily.time[index].date(utcOffset: utcOffset),
-                let high = daily.temperature2mMax[safe: index] ?? nil,
-                let low = daily.temperature2mMin[safe: index] ?? nil
+                let high = daily.temperature2mMax.value(at: index),
+                let low = daily.temperature2mMin.value(at: index)
             else { return nil }
-            let chance = daily.precipitationProbabilityMax?[safe: index] ?? nil
-            let code = daily.weatherCode[safe: index] ?? nil
-            let sunrise = daily.sunrise?[safe: index] ?? nil
-            let sunset = daily.sunset?[safe: index] ?? nil
+            let chance = daily.precipitationProbabilityMax?.value(at: index)
+            let code = daily.weatherCode.value(at: index)
+            let sunrise = daily.sunrise?.value(at: index)
+            let sunset = daily.sunset?.value(at: index)
             return DailyForecast(
                 date: date,
                 high: high,
@@ -87,15 +87,16 @@ enum ForecastMapper {
                 condition: WeatherCondition(wmoCode: code ?? -1),
                 sunrise: sunrise?.date(utcOffset: utcOffset),
                 sunset: sunset?.date(utcOffset: utcOffset),
-                uvIndexMax: daily.uvIndexMax?[safe: index] ?? nil
+                uvIndexMax: daily.uvIndexMax?.value(at: index)
             )
         }
     }
 }
 
 extension Array {
-    /// `nil` instead of a crash when Open-Meteo returns columns of different lengths.
-    subscript(safe index: Int) -> Element? {
+    /// A column's value, or `nil` when it's missing or the column is shorter than the times
+    /// (Open-Meteo can return columns of different lengths).
+    func value<Wrapped>(at index: Int) -> Wrapped? where Element == Wrapped? {
         indices.contains(index) ? self[index] : nil
     }
 }

@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     container: ghcr.io/realm/swiftlint:0.57.1
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Lint
         run: swiftlint lint --strict --reporter github-actions-logging
 
@@ -27,7 +27,7 @@ jobs:
       contents: write   # only used to publish the coverage badge to the `badges` branch
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Pick a simulator
         id: sim
