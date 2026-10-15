@@ -34,76 +34,76 @@ struct APITime: Decodable, Equatable {
 struct ForecastResponse: Decodable {
     let utcOffsetSeconds: Int
     let timezone: String?
-    let current: Current
-    let hourly: Hourly
-    let daily: Daily
+    let current: ForecastCurrent
+    let hourly: ForecastHourly
+    let daily: ForecastDaily
 
     enum CodingKeys: String, CodingKey {
         case utcOffsetSeconds = "utc_offset_seconds"
         case timezone, current, hourly, daily
     }
+}
 
-    struct Current: Decodable {
-        let time: APITime
-        let temperature2m: Double
-        let relativeHumidity2m: Double?
-        let apparentTemperature: Double?
-        let isDay: Int?
-        let precipitation: Double?
-        let weatherCode: Int?
-        let windSpeed10m: Double?
-        let windDirection10m: Double?
-        let pressureMsl: Double?
+struct ForecastCurrent: Decodable {
+    let time: APITime
+    let temperature2m: Double
+    let relativeHumidity2m: Double?
+    let apparentTemperature: Double?
+    let isDay: Int?
+    let precipitation: Double?
+    let weatherCode: Int?
+    let windSpeed10m: Double?
+    let windDirection10m: Double?
+    let pressureMsl: Double?
 
-        enum CodingKeys: String, CodingKey {
-            case time
-            case temperature2m = "temperature_2m"
-            case relativeHumidity2m = "relative_humidity_2m"
-            case apparentTemperature = "apparent_temperature"
-            case isDay = "is_day"
-            case precipitation
-            case weatherCode = "weather_code"
-            case windSpeed10m = "wind_speed_10m"
-            case windDirection10m = "wind_direction_10m"
-            case pressureMsl = "pressure_msl"
-        }
+    enum CodingKeys: String, CodingKey {
+        case time
+        case temperature2m = "temperature_2m"
+        case relativeHumidity2m = "relative_humidity_2m"
+        case apparentTemperature = "apparent_temperature"
+        case isDay = "is_day"
+        case precipitation
+        case weatherCode = "weather_code"
+        case windSpeed10m = "wind_speed_10m"
+        case windDirection10m = "wind_direction_10m"
+        case pressureMsl = "pressure_msl"
     }
+}
 
-    struct Hourly: Decodable {
-        let time: [APITime]
-        let temperature2m: [Double?]
-        let precipitationProbability: [Double?]?
-        let weatherCode: [Int?]
-        let isDay: [Int?]?
+struct ForecastHourly: Decodable {
+    let time: [APITime]
+    let temperature2m: [Double?]
+    let precipitationProbability: [Double?]?
+    let weatherCode: [Int?]
+    let isDay: [Int?]?
 
-        enum CodingKeys: String, CodingKey {
-            case time
-            case temperature2m = "temperature_2m"
-            case precipitationProbability = "precipitation_probability"
-            case weatherCode = "weather_code"
-            case isDay = "is_day"
-        }
+    enum CodingKeys: String, CodingKey {
+        case time
+        case temperature2m = "temperature_2m"
+        case precipitationProbability = "precipitation_probability"
+        case weatherCode = "weather_code"
+        case isDay = "is_day"
     }
+}
 
-    struct Daily: Decodable {
-        let time: [APITime]
-        let weatherCode: [Int?]
-        let temperature2mMax: [Double?]
-        let temperature2mMin: [Double?]
-        let precipitationProbabilityMax: [Double?]?
-        let sunrise: [APITime?]?
-        let sunset: [APITime?]?
-        let uvIndexMax: [Double?]?
+struct ForecastDaily: Decodable {
+    let time: [APITime]
+    let weatherCode: [Int?]
+    let temperature2mMax: [Double?]
+    let temperature2mMin: [Double?]
+    let precipitationProbabilityMax: [Double?]?
+    let sunrise: [APITime?]?
+    let sunset: [APITime?]?
+    let uvIndexMax: [Double?]?
 
-        enum CodingKeys: String, CodingKey {
-            case time
-            case weatherCode = "weather_code"
-            case temperature2mMax = "temperature_2m_max"
-            case temperature2mMin = "temperature_2m_min"
-            case precipitationProbabilityMax = "precipitation_probability_max"
-            case sunrise, sunset
-            case uvIndexMax = "uv_index_max"
-        }
+    enum CodingKeys: String, CodingKey {
+        case time
+        case weatherCode = "weather_code"
+        case temperature2mMax = "temperature_2m_max"
+        case temperature2mMin = "temperature_2m_min"
+        case precipitationProbabilityMax = "precipitation_probability_max"
+        case sunrise, sunset
+        case uvIndexMax = "uv_index_max"
     }
 }
 

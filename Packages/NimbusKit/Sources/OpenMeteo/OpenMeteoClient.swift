@@ -48,7 +48,7 @@ public struct OpenMeteoClient: ForecastService, PlaceSearchService {
             throw WeatherError.unavailable
         }
         guard (200..<300).contains(response.statusCode) else {
-            Self.log.error("HTTP \(response.statusCode): \(String(decoding: data.prefix(300), as: UTF8.self), privacy: .public)")
+            Self.log.error("HTTP \(response.statusCode): \(String(bytes: data.prefix(300), encoding: .utf8) ?? "", privacy: .public)")
             throw WeatherError.unavailable
         }
         return data

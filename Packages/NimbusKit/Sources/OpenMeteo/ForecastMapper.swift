@@ -33,7 +33,7 @@ enum ForecastMapper {
         )
     }
 
-    private static func current(from current: ForecastResponse.Current, at time: Date) -> CurrentConditions {
+    private static func current(from current: ForecastCurrent, at time: Date) -> CurrentConditions {
         CurrentConditions(
             time: time,
             temperature: current.temperature2m,
@@ -49,7 +49,7 @@ enum ForecastMapper {
     }
 
     /// Hours with a missing time or temperature are skipped rather than shown as zero.
-    private static func hourly(from hourly: ForecastResponse.Hourly, utcOffset: Int) -> [HourlyForecast] {
+    private static func hourly(from hourly: ForecastHourly, utcOffset: Int) -> [HourlyForecast] {
         hourly.time.indices.compactMap { index in
             guard
                 let time = hourly.time[index].date(utcOffset: utcOffset),
@@ -68,7 +68,7 @@ enum ForecastMapper {
         }
     }
 
-    private static func daily(from daily: ForecastResponse.Daily, utcOffset: Int) -> [DailyForecast] {
+    private static func daily(from daily: ForecastDaily, utcOffset: Int) -> [DailyForecast] {
         daily.time.indices.compactMap { index in
             guard
                 let date = daily.time[index].date(utcOffset: utcOffset),
