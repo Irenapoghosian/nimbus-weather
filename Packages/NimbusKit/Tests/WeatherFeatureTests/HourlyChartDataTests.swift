@@ -46,6 +46,20 @@ final class HourlyChartDataTests: XCTestCase {
         XCTAssertNil(HourlyChartData.nearest(to: nil, in: points))
     }
 
+    func testAxisLabelsFollowTheCitysClock() {
+        // `start` is 10:00 in Yerevan (UTC+4), 23:00 the day before in Los Angeles (UTC-7).
+        let points = (0..<24).map { point(hour: $0, temperature: 0) }
+        let yerevan = TimeZone(identifier: "Asia/Yerevan") ?? .gmt
+        let losAngeles = TimeZone(identifier: "America/Los_Angeles") ?? .gmt
+
+        let yerevanTicks = HourlyChartData.axisDates(for: points, in: yerevan)
+        let losAngelesTicks = HourlyChartData.axisDates(for: points, in: losAngeles)
+
+        XCTAssertEqual(yerevanTicks.count, 4)
+        XCTAssertEqual(yerevanTicks.first, start.addingTimeInterval(2 * 3600))       // 12:00 in Yerevan
+        XCTAssertEqual(losAngelesTicks.first, start.addingTimeInterval(1 * 3600))    // 00:00 in Los Angeles
+    }
+
     func testLabels() {
         XCTAssertEqual(HourlyChartData.label(17.6, metric: .temperature), "18°")
         XCTAssertEqual(HourlyChartData.label(40, metric: .precipitation), "40%")

@@ -9,7 +9,7 @@ options:
 settings:
   base:
     SWIFT_VERSION: "5.0"
-    MARKETING_VERSION: "0.2.0"
+    MARKETING_VERSION: "0.3.0"
     CURRENT_PROJECT_VERSION: "1"
     DEVELOPMENT_TEAM: G6AA4T82BJ
 
@@ -23,6 +23,7 @@ targets:
     platform: iOS
     sources: [App]
     dependencies:
+      - target: NimbusWidgets
       - package: NimbusKit
         product: WeatherCore
       - package: NimbusKit
@@ -43,12 +44,47 @@ targets:
         UILaunchScreen:
           UIColorName: LaunchBackground
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        # Widgets open their city with nimbus://place?code=…
+        CFBundleURLTypes:
+          - CFBundleURLName: com.irenapoghosyan.nimbus
+            CFBundleURLSchemes: [nimbus]
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.irenapoghosyan.nimbus
         TARGETED_DEVICE_FAMILY: "1"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+
+  # Home Screen and Lock Screen widgets. Reuses the app's modules; only the wiring lives here.
+  # No App Group is needed: each widget keeps its own city.
+  NimbusWidgets:
+    type: app-extension
+    platform: iOS
+    sources: [Widgets]
+    dependencies:
+      - package: NimbusKit
+        product: WeatherCore
+      - package: NimbusKit
+        product: OpenMeteo
+      - package: NimbusKit
+        product: DesignSystem
+      - package: NimbusKit
+        product: WidgetFeature
+      - sdk: WidgetKit.framework
+      - sdk: SwiftUI.framework
+    info:
+      path: Widgets/Info.plist
+      properties:
+        CFBundleDisplayName: Nimbus
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.irenapoghosyan.nimbus.widgets
+        TARGETED_DEVICE_FAMILY: "1"
+        SKIP_INSTALL: YES
 
 schemes:
   Nimbus:
@@ -64,3 +100,20 @@ schemes:
         - package: NimbusKit/LocationKitTests
         - package: NimbusKit/DesignSystemTests
         - package: NimbusKit/WeatherFeatureTests
+        - package: NimbusKit/WidgetFeatureTests
+
+  # Running this scheme puts the widget straight onto the simulator's Home Screen.
+  # Change _XCWidgetFamily to systemMedium or accessoryRectangular to see the other sizes.
+  NimbusWidgets:
+    build:
+      targets:
+        NimbusWidgets: all
+        Nimbus: all
+    run:
+      config: Debug
+      askForAppToLaunch: true
+      launchAutomaticallySubstyle: "2"
+      environmentVariables:
+        _XCWidgetKind: WeatherWidget
+        _XCWidgetFamily: systemSmall
+        _XCWidgetDefaultView: timeline

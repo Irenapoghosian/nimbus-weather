@@ -2,6 +2,7 @@
 included:
   - App
   - Packages/NimbusKit/Sources
+  - Widgets
   - Packages/NimbusKit/Tests
 excluded:
   - Packages/NimbusKit/.build

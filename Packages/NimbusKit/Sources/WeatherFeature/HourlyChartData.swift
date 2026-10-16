@@ -61,6 +61,14 @@ public enum HourlyChartData {
         return points.min { abs($0.time.timeIntervalSince(date)) < abs($1.time.timeIntervalSince(date)) }
     }
 
+    /// The hours that get a label on the x-axis: 00, 06, 12 and 18 in the city's own time zone.
+    /// (Swift Charts' own date labels follow the phone's time zone, so Los Angeles would show Yerevan's hours.)
+    public static func axisDates(for points: [ChartPoint], in timeZone: TimeZone, every step: Int = 6) -> [Date] {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timeZone
+        return points.map(\.time).filter { calendar.component(.hour, from: $0) % step == 0 }
+    }
+
     /// "18°" or "40%".
     public static func label(_ value: Double, metric: ChartMetric) -> String {
         switch metric {

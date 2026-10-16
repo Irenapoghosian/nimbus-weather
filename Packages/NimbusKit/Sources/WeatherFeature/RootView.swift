@@ -28,6 +28,12 @@ public struct NimbusRootView: View {
             PlacesView(model: model)
         }
         .preferredColorScheme(.dark)
+        .onOpenURL { url in
+            // A tapped widget opens its city, adding it to the list if it isn't saved yet.
+            guard let place = PlaceLink.place(from: url) else { return }
+            showsPlaces = false
+            model.add(place)
+        }
         .onChange(of: scenePhase) { _, phase in
             // Back from the background (or from Settings after allowing location): bring the page up to date.
             guard phase == .active, let page = model.selectedPage else { return }

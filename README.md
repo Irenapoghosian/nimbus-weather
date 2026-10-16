@@ -31,6 +31,7 @@
 - **Chart** — the next 24 hours as a temperature curve or chance-of-rain bars (Swift Charts). Drag across it to read any hour.
 - **10 days** — each day's low-to-high bar is drawn on the same scale as the rest of the week, so a cold day looks cold.
 - **Details** — feels like, humidity, wind with its direction, pressure, UV index with its level, sunrise and sunset, all in the city's own time zone.
+- **Widgets** — small and medium on the Home Screen, plus circular, rectangular and inline on the Lock Screen. Each widget has its own city: long-press, *Edit Widget*, and search any city in the world. Tapping a widget opens Nimbus on that city.
 - **Pull to refresh**, and a quiet refresh when the app comes back after ten minutes or more.
 - **Errors that help** — offline, the service not answering, location denied: each has its own message and a way out. A failed refresh never wipes a forecast that is already on screen.
 - **Privacy** — coordinates are rounded to two decimals (about 1 km) before they leave the phone.
@@ -44,6 +45,10 @@ flowchart LR
     App["Nimbus app<br/>(composition root)"] --> Feature[WeatherFeature]
     App --> OpenMeteo
     App --> LocationKit
+    Widgets["Widget extension"] --> WidgetFeature
+    Widgets --> OpenMeteo
+    WidgetFeature --> Core
+    WidgetFeature --> Design
     Feature --> Core[WeatherCore]
     Feature --> Design[DesignSystem]
     Design --> Core
@@ -57,7 +62,8 @@ flowchart LR
 | `OpenMeteo` | `OpenMeteoClient` for forecasts and city search. Decodes Open-Meteo's column-shaped JSON and turns it into rows, skipping gaps instead of showing zeros. Network and decoding errors come out as `WeatherError`. |
 | `LocationKit` | `DeviceLocationProvider` wraps `CLLocationManager` and `CLGeocoder` in `async` calls. |
 | `DesignSystem` | Sky gradients and the animated sky (`SkyScene`, `ParticleMath`, `WeatherEffectsView`), number and time formats, and reusable views: glass cards, condition icons, temperature bars. |
-| `WeatherFeature` | `@Observable` view models (`NimbusModel`, `WeatherViewModel`, `PlaceSearchModel`) and the SwiftUI screens. |
+| `WeatherFeature` | `@Observable` view models (`NimbusModel`, `WeatherViewModel`, `PlaceSearchModel`), the hourly chart and the SwiftUI screens. |
+| `WidgetFeature` | Widget entries, `WeatherEntryLoader` (the app's `ForecastService` turned into timelines) and the views for every widget size. |
 
 ### Key decisions
 
@@ -66,6 +72,7 @@ flowchart LR
 - **Time zones done right.** Open-Meteo is asked for Unix times plus the city's time zone, so "Today", "15:00" and sunrise are always the city's, not the phone's.
 - **Search that waits for you.** Typing restarts a short pause (`.task(id:)` cancels the previous one), so the API is called once you stop typing, not on every key.
 - **Particles without state.** Every raindrop, snowflake and star is a pure function of its index and the current time, so nothing is stored between frames, nothing drifts, and the motion is unit-tested like any other code.
+- **Widgets without an App Group.** A widget keeps its city in its own configuration (an App Intent with a searchable `CityEntity`), so it never needs to read the app's storage. Several widgets can show several cities, and the app builds with a free Apple ID.
 - **Testable time.** View models take a clock, so "is this forecast older than ten minutes?" is tested without waiting.
 
 ## Requirements
@@ -86,15 +93,18 @@ open Nimbus.xcodeproj
 
 Press **⌘R** to run, or **⌘U** to run the tests. In the Simulator, pick a location with **Features → Location**.
 
+To try the widget, run the **NimbusWidgets** scheme: it puts the widget straight onto the simulator's Home Screen.
+
 ## Testing
 
-**80 unit tests**, run on every push by GitHub Actions together with SwiftLint in strict mode. The coverage badge counts logic files; SwiftUI views and the thin Core Location and URLSession wrappers are checked by running the app.
+**89 unit tests**, run on every push by GitHub Actions together with SwiftLint in strict mode. The coverage badge counts logic files; SwiftUI views and the thin Core Location and URLSession wrappers are checked by running the app.
 
 - `OpenMeteoClientTests`, `DecodingTests` — real response shapes as fixtures: mapping, skipped gaps, columns of different lengths, Unix and local times, request URLs, rounded coordinates, offline and server errors.
 - `WeatherConditionTests`, `ForecastRulesTests`, `PlaceTests` — WMO codes, day and night symbols, the next 24 hours, the week's scale, compass, UV, saving cities.
 - `LocationNamingTests` — naming your location from a city, a region or nothing.
 - `NimbusFormatTests` — temperatures (never "-0°"), times in the city's time zone, "Today".
 - `SkySceneTests`, `ParticleMathTests` — which effects each weather gets, drops that fall and wrap, snow that sways in its column, stars that twinkle, rare and gentle lightning.
+- `WidgetFeatureTests`, `PlaceLinkTests` — widget snapshots, the Lock Screen gauge's scale, refresh and retry times, and the `nimbus://` links widgets open.
 - `HourlyChartDataTests` — the chart's scale, missing rain chances, picking the nearest hour, labels.
 - `WeatherViewModelTests`, `PlaceSearchModelTests`, `NimbusModelTests`, `ForecastDetailsTests` — loading, errors, keeping a forecast after a failed refresh, the ten-minute rule, search, adding, deleting and reordering cities.
 
@@ -102,7 +112,8 @@ Press **⌘R** to run, or **⌘U** to run the tests. In the Simulator, pick a lo
 
 - [x] Forecasts, location, city search, saved cities, tests and CI
 - [x] Animated skies (rain, snow, clouds, stars, lightning) and Swift Charts for temperature and rain
-- [ ] Home Screen and Lock Screen widgets, and an Apple Watch app
+- [x] Home Screen and Lock Screen widgets
+- [ ] An Apple Watch app
 - [ ] Screenshots, a demo video and the first release
 
 ## Credits

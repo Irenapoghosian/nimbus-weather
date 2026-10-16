@@ -42,7 +42,6 @@ struct HourlyChartView: View {
                 }
             }
             .frame(height: 170)
-            .environment(\.timeZone, timeZone)
         }
     }
 
@@ -98,9 +97,12 @@ struct HourlyChartView: View {
         chart
             .chartXSelection(value: $selectedTime)
             .chartXAxis {
-                AxisMarks(values: .stride(by: .hour, count: 6)) { _ in
+                AxisMarks(values: HourlyChartData.axisDates(for: points, in: timeZone)) { value in
                     AxisGridLine().foregroundStyle(.white.opacity(0.15))
-                    AxisValueLabel(format: .dateTime.hour()).foregroundStyle(.white.opacity(0.7))
+                    AxisValueLabel {
+                        Text(value.as(Date.self).map { NimbusFormat.hour($0, in: timeZone) } ?? "")
+                    }
+                    .foregroundStyle(.white.opacity(0.7))
                 }
             }
             .chartYAxis {
