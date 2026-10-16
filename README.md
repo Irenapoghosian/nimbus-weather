@@ -33,7 +33,7 @@
 
 ## Demo
 
-<!-- Drag nimbus-demo.mp4 onto this line in GitHub's editor; GitHub replaces it with the video's link. -->
+https://github.com/user-attachments/assets/54e7a4c0-50a2-4339-88d5-40338124501b
 
 ## Features
 
