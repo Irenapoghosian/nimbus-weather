@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<!-- The simulator's location when Nimbus runs from Xcode, so "My Location" works without setting it by hand. -->
+<gpx version="1.1" creator="Nimbus">
+    <wpt lat="40.1811" lon="44.5136">
+        <name>Yerevan</name>
+    </wpt>
+</gpx>

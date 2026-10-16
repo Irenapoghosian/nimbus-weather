@@ -31,6 +31,10 @@
 |:--:|:--:|:--:|:--:|:--:|
 | <img src="docs/screenshots/day.png" width="160"> | <img src="docs/screenshots/night.png" width="160"> | <img src="docs/screenshots/daily.png" width="160"> | <img src="docs/screenshots/widget.png" width="160"> | <img src="docs/screenshots/cities.png" width="160"> |
 
+## Demo
+
+<!-- Drag nimbus-demo.mp4 onto this line in GitHub's editor; GitHub replaces it with the video's link. -->
+
 ## Features
 
 - **Weather where you are** — Core Location finds you (city-level accuracy is enough and answers faster), and the page is named after your city. If location is off, the page says so and offers a button to Settings.
@@ -124,8 +128,7 @@ To try the widget, run the **NimbusWidgets** scheme: it puts the widget straight
 - [x] Animated skies (rain, snow, clouds, stars, lightning) and Swift Charts for temperature and rain
 - [x] Home Screen and Lock Screen widgets
 - [ ] An Apple Watch app
-- [x] Screenshots
-- [ ] A demo video and the first release
+- [x] Screenshots, a demo video and the first release (v1.0.0)
 
 ## Credits
 
