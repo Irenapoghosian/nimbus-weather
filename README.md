@@ -21,6 +21,16 @@
 
 ---
 
+<p align="center">
+  <img src="docs/screenshots/hero.png" alt="Nimbus on iPhone: a cloudy day with the rain chart, a clear night with stars and the temperature curve, the Home Screen widget, and the city list">
+</p>
+
+## Screenshots
+
+| Day | Night | 10 days | Widget | Cities |
+|:--:|:--:|:--:|:--:|:--:|
+| <img src="docs/screenshots/day.png" width="160"> | <img src="docs/screenshots/night.png" width="160"> | <img src="docs/screenshots/daily.png" width="160"> | <img src="docs/screenshots/widget.png" width="160"> | <img src="docs/screenshots/cities.png" width="160"> |
+
 ## Features
 
 - **Weather where you are** — Core Location finds you (city-level accuracy is enough and answers faster), and the page is named after your city. If location is off, the page says so and offers a button to Settings.
@@ -114,7 +124,8 @@ To try the widget, run the **NimbusWidgets** scheme: it puts the widget straight
 - [x] Animated skies (rain, snow, clouds, stars, lightning) and Swift Charts for temperature and rain
 - [x] Home Screen and Lock Screen widgets
 - [ ] An Apple Watch app
-- [ ] Screenshots, a demo video and the first release
+- [x] Screenshots
+- [ ] A demo video and the first release
 
 ## Credits
 
