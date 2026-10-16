@@ -1,140 +1,99 @@
 <p align="center">
-  <img src="App/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png" width="120" alt="Nimbus app icon">
-</p>
-
-<h1 align="center">Nimbus</h1>
-
-<p align="center">
-  A weather app for iPhone in SwiftUI: your location and saved cities, the next 24 hours, a 10-day forecast,
-  and skies that change with the weather. Built on the free Open-Meteo API, with no API key.
+  <img src="assets/header.png" alt="Irena Poghosyan, iOS Developer: Swift, SwiftUI, Core ML, AVFoundation">
 </p>
 
 <p align="center">
-  <img alt="iOS 17+" src="https://img.shields.io/badge/iOS-17%2B-black">
-  <img alt="Swift" src="https://img.shields.io/badge/Swift-5.10-orange">
-  <img alt="SwiftUI" src="https://img.shields.io/badge/UI-SwiftUI-0a84ff">
-  <img alt="CI" src="https://github.com/Irenapoghosian/nimbus-weather/actions/workflows/ci.yml/badge.svg">
-  <img alt="Coverage" src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Irenapoghosian/nimbus-weather/badges/coverage.json">
-  <img alt="SwiftLint" src="https://img.shields.io/badge/lint-SwiftLint-blue">
-  <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-lightgrey">
+  I build native iPhone apps in Swift, SwiftUI and UIKit: camera and on-device AI, live data and charts,
+  modular architecture, tested and shipped with CI.
+</p>
+
+<p align="center">
+  <a href="https://www.upwork.com/freelancers/~0139800b5b7c88c3b6"><img alt="Upwork" src="https://img.shields.io/badge/Upwork-Hire%20me-14a800?logo=upwork&logoColor=white"></a>
+  <a href="https://www.linkedin.com/in/irina-poghosyan-6811b2216/"><img alt="LinkedIn" src="https://img.shields.io/badge/LinkedIn-Connect-0a66c2?logo=linkedin&logoColor=white"></a>
+  <a href="mailto:poghosyanir@gmail.com"><img alt="Email" src="https://img.shields.io/badge/Email-Contact-555?logo=gmail&logoColor=white"></a>
 </p>
 
 ---
 
-<p align="center">
-  <img src="docs/screenshots/hero.png" alt="Nimbus on iPhone: a cloudy day with the rain chart, a clear night with stars and the temperature curve, the Home Screen widget, and the city list">
-</p>
+## Featured projects
 
-## Screenshots
+<a href="https://github.com/Irenapoghosian/pulse-crypto"><img src="assets/pulse.png" alt="Pulse: crypto markets and portfolio tracker"></a>
 
-| Day | Night | 10 days | Widget | Cities |
-|:--:|:--:|:--:|:--:|:--:|
-| <img src="docs/screenshots/day.png" width="160"> | <img src="docs/screenshots/night.png" width="160"> | <img src="docs/screenshots/daily.png" width="160"> | <img src="docs/screenshots/widget.png" width="160"> | <img src="docs/screenshots/cities.png" width="160"> |
+**[Pulse](https://github.com/Irenapoghosian/pulse-crypto)** · Crypto markets & portfolio tracker<br>
+A multi-module app with Clean Architecture: 9 Swift packages, live CoinGecko data with offline cache, interactive Swift Charts, a SwiftData portfolio, Home Screen widgets, VoiceOver and Audio Graphs, and live switching between English, Armenian and Russian. 100+ unit tests, SwiftLint strict and a coverage badge in CI.
 
-## Features
+<br>
 
-- **Weather where you are** — Core Location finds you (city-level accuracy is enough and answers faster), and the page is named after your city. If location is off, the page says so and offers a button to Settings.
-- **Saved cities** — search any city in the world, swipe between cities like in Apple Weather, delete with a swipe and reorder by dragging. The list survives relaunches.
-- **A living sky** — rain streaks, drifting snow, slow clouds, twinkling stars at night, a warm sun glow, and lightning in storms, drawn with `Canvas` and `TimelineView`. With Reduce Motion on, the sky holds still.
-- **Now** — temperature, condition, today's high and low.
-- **Next 24 hours** — a strip of hours with icons (moons at night) and the chance of rain when it's worth mentioning.
-- **Chart** — the next 24 hours as a temperature curve or chance-of-rain bars (Swift Charts). Drag across it to read any hour.
-- **10 days** — each day's low-to-high bar is drawn on the same scale as the rest of the week, so a cold day looks cold.
-- **Details** — feels like, humidity, wind with its direction, pressure, UV index with its level, sunrise and sunset, all in the city's own time zone.
-- **Widgets** — small and medium on the Home Screen, plus circular, rectangular and inline on the Lock Screen. Each widget has its own city: long-press, *Edit Widget*, and search any city in the world. Tapping a widget opens Nimbus on that city.
-- **Pull to refresh**, and a quiet refresh when the app comes back after ten minutes or more.
-- **Errors that help** — offline, the service not answering, location denied: each has its own message and a way out. A failed refresh never wipes a forecast that is already on screen.
-- **Privacy** — coordinates are rounded to two decimals (about 1 km) before they leave the phone.
+<a href="https://github.com/Irenapoghosian/sight-ai-camera"><img src="assets/sight.png" alt="Sight: on-device AI camera"></a>
 
-## Architecture
+**[Sight](https://github.com/Irenapoghosian/sight-ai-camera)** · On-device AI camera<br>
+Point the camera and it tells you what it sees, boxes every object (Core ML YOLOv3), reads text, and lifts subjects into PNG stickers. Everything runs on the iPhone at ~12 fps and ~25 ms per frame, with a frame-throttled `async` pipeline that never analyzes a stale frame.
 
-A local Swift package, `NimbusKit`, holds everything except the app's entry point. Modules only depend inward, on `WeatherCore`:
+<br>
 
-```mermaid
-flowchart LR
-    App["Nimbus app<br/>(composition root)"] --> Feature[WeatherFeature]
-    App --> OpenMeteo
-    App --> LocationKit
-    Widgets["Widget extension"] --> WidgetFeature
-    Widgets --> OpenMeteo
-    WidgetFeature --> Core
-    WidgetFeature --> Design
-    Feature --> Core[WeatherCore]
-    Feature --> Design[DesignSystem]
-    Design --> Core
-    OpenMeteo --> Core
-    LocationKit --> Core
-```
+<a href="https://github.com/Irenapoghosian/lumen-camera"><img src="assets/lumen.png" alt="Lumen: pro camera with live GPU filters"></a>
 
-| Module | What's inside |
-|---|---|
-| `WeatherCore` | `Place`, `Forecast`, `WeatherCondition` (WMO codes), the service protocols, `WeatherError`, and `ForecastRules`: pure functions for the next hours, the week's temperature scale, compass directions and UV levels. Foundation only. |
-| `OpenMeteo` | `OpenMeteoClient` for forecasts and city search. Decodes Open-Meteo's column-shaped JSON and turns it into rows, skipping gaps instead of showing zeros. Network and decoding errors come out as `WeatherError`. |
-| `LocationKit` | `DeviceLocationProvider` wraps `CLLocationManager` and `CLGeocoder` in `async` calls. |
-| `DesignSystem` | Sky gradients and the animated sky (`SkyScene`, `ParticleMath`, `WeatherEffectsView`), number and time formats, and reusable views: glass cards, condition icons, temperature bars. |
-| `WeatherFeature` | `@Observable` view models (`NimbusModel`, `WeatherViewModel`, `PlaceSearchModel`), the hourly chart and the SwiftUI screens. |
-| `WidgetFeature` | Widget entries, `WeatherEntryLoader` (the app's `ForecastService` turned into timelines) and the views for every widget size. |
+**[Lumen](https://github.com/Irenapoghosian/lumen-camera)** · Pro camera with live GPU filters<br>
+A camera built from scratch on AVFoundation, Core Image and Metal: real-time filters, multi-lens zoom (0.5× to 3×), tap to focus, exposure control, and full-resolution capture with the filter applied.
 
-### Key decisions
+<br>
 
-- **Protocols at the edges.** The screens know `ForecastService`, `PlaceSearchService`, `LocationProvider` and `PlacesStore`, never Open-Meteo or Core Location. Tests use fakes, and another weather provider would be one new type.
-- **One page model per city.** Each page loads itself the first time it appears and keeps its own state, so swiping to a city that failed doesn't affect the others.
-- **Time zones done right.** Open-Meteo is asked for Unix times plus the city's time zone, so "Today", "15:00" and sunrise are always the city's, not the phone's.
-- **Search that waits for you.** Typing restarts a short pause (`.task(id:)` cancels the previous one), so the API is called once you stop typing, not on every key.
-- **Particles without state.** Every raindrop, snowflake and star is a pure function of its index and the current time, so nothing is stored between frames, nothing drifts, and the motion is unit-tested like any other code.
-- **Widgets without an App Group.** A widget keeps its city in its own configuration (an App Intent with a searchable `CityEntity`), so it never needs to read the app's storage. Several widgets can show several cities, and the app builds with a free Apple ID.
-- **Testable time.** View models take a clock, so "is this forecast older than ten minutes?" is tested without waiting.
+<a href="https://github.com/Irenapoghosian/echo-chat"><img src="assets/echo.png" alt="Echo: a UIKit messenger"></a>
 
-## Requirements
+**[Echo](https://github.com/Irenapoghosian/echo-chat)** · A UIKit messenger, built in code<br>
+No storyboards: diffable data sources, MVVM with Combine, Core Data persistence, a composer that rides on the keyboard, Reply / Copy / Delete context menus with lifted bubbles, an animated typing indicator, photos with full-screen zoom, and Dark Mode. 34 unit tests in CI.
 
-- Xcode 16 or later, iOS 17 or later
-- [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`)
+<br>
 
-No API key is needed.
+<a href="https://github.com/Irenapoghosian/nimbus-weather"><img src="assets/nimbus.png" alt="Nimbus: weather with a living sky"></a>
 
-## Getting started
+**[Nimbus](https://github.com/Irenapoghosian/nimbus-weather)** · Weather with a living sky<br>
+Your location and saved cities, the next 24 hours as a Swift Charts curve, and a 10-day forecast, over a sky that rains, snows and twinkles (Canvas + TimelineView, with Reduce Motion respected). Home Screen and Lock Screen widgets with their own city search, 7 Swift packages and 89 unit tests in CI.
 
-```bash
-git clone https://github.com/Irenapoghosian/nimbus-weather.git
-cd nimbus-weather
-xcodegen
-open Nimbus.xcodeproj
-```
+---
 
-Press **⌘R** to run, or **⌘U** to run the tests. In the Simulator, pick a location with **Features → Location**.
+## More projects
 
-To try the widget, run the **NimbusWidgets** scheme: it puts the widget straight onto the simulator's Home Screen.
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://github.com/Irenapoghosian/expense-tracker"><img src="assets/expense.png" alt="ExpenseTracker"></a>
+      <br><b><a href="https://github.com/Irenapoghosian/expense-tracker">ExpenseTracker</a></b><br>
+      Expenses and monthly budgets with Core Data, MVVM, onboarding, unit and UI tests in CI.
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://github.com/Irenapoghosian/feed-app"><img src="assets/feed.png" alt="FeedApp"></a>
+      <br><b><a href="https://github.com/Irenapoghosian/feed-app">FeedApp</a></b><br>
+      An Instagram-style feed on the Unsplash API with infinite scroll and a two-tier image cache.
+    </td>
+  </tr>
+</table>
 
-## Testing
+---
 
-**89 unit tests**, run on every push by GitHub Actions together with SwiftLint in strict mode. The coverage badge counts logic files; SwiftUI views and the thin Core Location and URLSession wrappers are checked by running the app.
+## Tech stack
 
-- `OpenMeteoClientTests`, `DecodingTests` — real response shapes as fixtures: mapping, skipped gaps, columns of different lengths, Unix and local times, request URLs, rounded coordinates, offline and server errors.
-- `WeatherConditionTests`, `ForecastRulesTests`, `PlaceTests` — WMO codes, day and night symbols, the next 24 hours, the week's scale, compass, UV, saving cities.
-- `LocationNamingTests` — naming your location from a city, a region or nothing.
-- `NimbusFormatTests` — temperatures (never "-0°"), times in the city's time zone, "Today".
-- `SkySceneTests`, `ParticleMathTests` — which effects each weather gets, drops that fall and wrap, snow that sways in its column, stars that twinkle, rare and gentle lightning.
-- `WidgetFeatureTests`, `PlaceLinkTests` — widget snapshots, the Lock Screen gauge's scale, refresh and retry times, and the `nimbus://` links widgets open.
-- `HourlyChartDataTests` — the chart's scale, missing rain chances, picking the nearest hour, labels.
-- `WeatherViewModelTests`, `PlaceSearchModelTests`, `NimbusModelTests`, `ForecastDetailsTests` — loading, errors, keeping a forecast after a failed refresh, the ten-minute rule, search, adding, deleting and reordering cities.
+**Languages & UI** &nbsp;
+![Swift](https://img.shields.io/badge/Swift-F05138?logo=swift&logoColor=white)
+![SwiftUI](https://img.shields.io/badge/SwiftUI-0a84ff?logo=swift&logoColor=white)
+![UIKit](https://img.shields.io/badge/UIKit-2396F3?logo=apple&logoColor=white)
 
-## Roadmap
+**Apple frameworks** &nbsp;
+![Core ML](https://img.shields.io/badge/Core%20ML-34aadc)
+![Vision](https://img.shields.io/badge/Vision-5856d6)
+![AVFoundation](https://img.shields.io/badge/AVFoundation-ff9500)
+![Core Image](https://img.shields.io/badge/Core%20Image-ff2d55)
+![Metal](https://img.shields.io/badge/Metal-8e8e93)
+![Swift Charts](https://img.shields.io/badge/Swift%20Charts-30d158)
+![WidgetKit](https://img.shields.io/badge/WidgetKit-af52de)
+![SwiftData](https://img.shields.io/badge/SwiftData-ff6b35)
+![Core Data](https://img.shields.io/badge/Core%20Data-64d2ff)
 
-- [x] Forecasts, location, city search, saved cities, tests and CI
-- [x] Animated skies (rain, snow, clouds, stars, lightning) and Swift Charts for temperature and rain
-- [x] Home Screen and Lock Screen widgets
-- [ ] An Apple Watch app
-- [x] Screenshots
-- [ ] A demo video and the first release
-
-## Credits
-
-[Weather data by Open-Meteo.com](https://open-meteo.com/), under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). The app shows this credit under every forecast.
-
-## Author
-
-**Irena Poghosyan** — iOS developer · [GitHub](https://github.com/Irenapoghosian)
-
-## License
-
-MIT. See [LICENSE](LICENSE).
+**Architecture & tooling** &nbsp;
+![Clean Architecture](https://img.shields.io/badge/Clean%20Architecture-444)
+![MVVM](https://img.shields.io/badge/MVVM-444)
+![async/await](https://img.shields.io/badge/async%2Fawait-444)
+![SPM](https://img.shields.io/badge/Swift%20Package%20Manager-444)
+![XCTest](https://img.shields.io/badge/XCTest-444)
+![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-2088FF?logo=githubactions&logoColor=white)
+![SwiftLint](https://img.shields.io/badge/SwiftLint-444)
