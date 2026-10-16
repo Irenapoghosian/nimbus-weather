@@ -14,7 +14,7 @@ public struct NimbusRootView: View {
 
     public var body: some View {
         ZStack {
-            SkyBackground(sky: shownCondition?.condition.sky ?? .clear, isDay: shownCondition?.isDay ?? true)
+            SkyBackground(condition: shownCondition?.condition ?? .clear, isDay: shownCondition?.isDay ?? true)
             TabView(selection: $model.selectedID) {
                 ForEach(model.pages) { page in
                     WeatherPageView(model: page) { showsPlaces = true }
@@ -56,7 +56,11 @@ public struct NimbusRootView: View {
         }
         .foregroundStyle(.white)
         .padding(.horizontal, 12)
-        .background(.ultraThinMaterial.opacity(0.7), ignoresSafeAreaEdges: .bottom)
+        // A light dark tint reads on every sky; a material turned muddy over bright blue.
+        .background(.black.opacity(0.18), ignoresSafeAreaEdges: .bottom)
+        .overlay(alignment: .top) {
+            Rectangle().fill(.white.opacity(0.15)).frame(height: 0.5)
+        }
     }
 }
 

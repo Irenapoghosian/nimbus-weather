@@ -25,8 +25,10 @@
 
 - **Weather where you are** — Core Location finds you (city-level accuracy is enough and answers faster), and the page is named after your city. If location is off, the page says so and offers a button to Settings.
 - **Saved cities** — search any city in the world, swipe between cities like in Apple Weather, delete with a swipe and reorder by dragging. The list survives relaunches.
-- **Now** — temperature, condition, today's high and low, over a sky gradient that follows the weather and the time of day.
+- **A living sky** — rain streaks, drifting snow, slow clouds, twinkling stars at night, a warm sun glow, and lightning in storms, drawn with `Canvas` and `TimelineView`. With Reduce Motion on, the sky holds still.
+- **Now** — temperature, condition, today's high and low.
 - **Next 24 hours** — a strip of hours with icons (moons at night) and the chance of rain when it's worth mentioning.
+- **Chart** — the next 24 hours as a temperature curve or chance-of-rain bars (Swift Charts). Drag across it to read any hour.
 - **10 days** — each day's low-to-high bar is drawn on the same scale as the rest of the week, so a cold day looks cold.
 - **Details** — feels like, humidity, wind with its direction, pressure, UV index with its level, sunrise and sunset, all in the city's own time zone.
 - **Pull to refresh**, and a quiet refresh when the app comes back after ten minutes or more.
@@ -54,7 +56,7 @@ flowchart LR
 | `WeatherCore` | `Place`, `Forecast`, `WeatherCondition` (WMO codes), the service protocols, `WeatherError`, and `ForecastRules`: pure functions for the next hours, the week's temperature scale, compass directions and UV levels. Foundation only. |
 | `OpenMeteo` | `OpenMeteoClient` for forecasts and city search. Decodes Open-Meteo's column-shaped JSON and turns it into rows, skipping gaps instead of showing zeros. Network and decoding errors come out as `WeatherError`. |
 | `LocationKit` | `DeviceLocationProvider` wraps `CLLocationManager` and `CLGeocoder` in `async` calls. |
-| `DesignSystem` | Sky gradients, number and time formats, and reusable views: glass cards, condition icons, temperature bars. |
+| `DesignSystem` | Sky gradients and the animated sky (`SkyScene`, `ParticleMath`, `WeatherEffectsView`), number and time formats, and reusable views: glass cards, condition icons, temperature bars. |
 | `WeatherFeature` | `@Observable` view models (`NimbusModel`, `WeatherViewModel`, `PlaceSearchModel`) and the SwiftUI screens. |
 
 ### Key decisions
@@ -63,6 +65,7 @@ flowchart LR
 - **One page model per city.** Each page loads itself the first time it appears and keeps its own state, so swiping to a city that failed doesn't affect the others.
 - **Time zones done right.** Open-Meteo is asked for Unix times plus the city's time zone, so "Today", "15:00" and sunrise are always the city's, not the phone's.
 - **Search that waits for you.** Typing restarts a short pause (`.task(id:)` cancels the previous one), so the API is called once you stop typing, not on every key.
+- **Particles without state.** Every raindrop, snowflake and star is a pure function of its index and the current time, so nothing is stored between frames, nothing drifts, and the motion is unit-tested like any other code.
 - **Testable time.** View models take a clock, so "is this forecast older than ten minutes?" is tested without waiting.
 
 ## Requirements
@@ -85,18 +88,20 @@ Press **⌘R** to run, or **⌘U** to run the tests. In the Simulator, pick a lo
 
 ## Testing
 
-**63 unit tests**, run on every push by GitHub Actions together with SwiftLint in strict mode. The coverage badge counts logic files; SwiftUI views and the thin Core Location and URLSession wrappers are checked by running the app.
+**80 unit tests**, run on every push by GitHub Actions together with SwiftLint in strict mode. The coverage badge counts logic files; SwiftUI views and the thin Core Location and URLSession wrappers are checked by running the app.
 
 - `OpenMeteoClientTests`, `DecodingTests` — real response shapes as fixtures: mapping, skipped gaps, columns of different lengths, Unix and local times, request URLs, rounded coordinates, offline and server errors.
 - `WeatherConditionTests`, `ForecastRulesTests`, `PlaceTests` — WMO codes, day and night symbols, the next 24 hours, the week's scale, compass, UV, saving cities.
 - `LocationNamingTests` — naming your location from a city, a region or nothing.
 - `NimbusFormatTests` — temperatures (never "-0°"), times in the city's time zone, "Today".
+- `SkySceneTests`, `ParticleMathTests` — which effects each weather gets, drops that fall and wrap, snow that sways in its column, stars that twinkle, rare and gentle lightning.
+- `HourlyChartDataTests` — the chart's scale, missing rain chances, picking the nearest hour, labels.
 - `WeatherViewModelTests`, `PlaceSearchModelTests`, `NimbusModelTests`, `ForecastDetailsTests` — loading, errors, keeping a forecast after a failed refresh, the ten-minute rule, search, adding, deleting and reordering cities.
 
 ## Roadmap
 
 - [x] Forecasts, location, city search, saved cities, tests and CI
-- [ ] Animated skies (rain, snow, clouds, stars) and Swift Charts for temperature and rain
+- [x] Animated skies (rain, snow, clouds, stars, lightning) and Swift Charts for temperature and rain
 - [ ] Home Screen and Lock Screen widgets, and an Apple Watch app
 - [ ] Screenshots, a demo video and the first release
 

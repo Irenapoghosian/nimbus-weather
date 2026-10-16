@@ -43,6 +43,7 @@ struct ForecastScrollView: View {
             VStack(spacing: 14) {
                 CurrentHeader(title: model.title, isCurrentLocation: model.isCurrentLocation, forecast: forecast)
                 HourlyCard(hours: model.upcomingHours, timeZone: forecast.timeZone)
+                HourlyChartView(hours: model.upcomingHours, timeZone: forecast.timeZone)
                 DailyCard(days: forecast.daily, timeZone: forecast.timeZone, now: model.currentTime)
                 DetailsGrid(items: ForecastDetails.items(for: forecast))
                 AttributionFooter(lastUpdated: model.lastUpdated)

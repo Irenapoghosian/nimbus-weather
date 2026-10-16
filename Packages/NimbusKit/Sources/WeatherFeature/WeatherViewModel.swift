@@ -60,11 +60,18 @@ public final class WeatherViewModel: Identifiable {
         return "My Location"
     }
 
-    /// Under the name in the city list: "California, United States", or "My Location" once the city is known.
+    /// Under the name in the city list: "California, United States", "My Location" once the city is known,
+    /// or "Location unavailable" when Core Location can't help.
     public var subtitle: String {
         switch source {
-        case .currentLocation: forecast == nil ? "" : "My Location"
-        case .place(let place): place.subtitle
+        case .place(let place):
+            return place.subtitle
+        case .currentLocation:
+            if forecast != nil { return "My Location" }
+            if case .failed(let error) = state, error == .locationDenied || error == .locationUnavailable {
+                return "Location unavailable"
+            }
+            return ""
         }
     }
 

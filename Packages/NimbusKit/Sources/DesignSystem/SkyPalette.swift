@@ -27,21 +27,3 @@ public enum SkyPalette {
         )
     }
 }
-
-/// The sky gradient for a condition, filling the screen behind everything.
-public struct SkyBackground: View {
-    private let sky: WeatherCondition.Sky
-    private let isDay: Bool
-
-    public init(sky: WeatherCondition.Sky, isDay: Bool) {
-        self.sky = sky
-        self.isDay = isDay
-    }
-
-    public var body: some View {
-        LinearGradient(colors: SkyPalette.colors(for: sky, isDay: isDay), startPoint: .top, endPoint: .bottom)
-            .ignoresSafeArea()
-            .animation(.easeInOut(duration: 0.6), value: sky)
-            .animation(.easeInOut(duration: 0.6), value: isDay)
-    }
-}

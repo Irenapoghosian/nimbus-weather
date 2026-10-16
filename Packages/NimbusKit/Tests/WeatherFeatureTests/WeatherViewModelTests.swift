@@ -46,6 +46,7 @@ final class WeatherViewModelTests: XCTestCase {
         await page.load()
 
         XCTAssertEqual(page.state, .failed(.locationDenied))
+        XCTAssertEqual(page.subtitle, "Location unavailable")
         XCTAssertTrue(forecasts.requestedPlaces.isEmpty)
     }
 
